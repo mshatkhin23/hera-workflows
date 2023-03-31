@@ -97,6 +97,7 @@ class Script(
                 # Resolve the function to a string
                 return self.source(**kwargs)
             else:
+                print("going the string building route!")
                 script = ""
                 # Argo will save the script as a file and run it with cmd:
                 # - python /argo/staging/script
@@ -110,6 +111,8 @@ class Script(
                 if script_extra:
                     script += copy.deepcopy(script_extra)
                     script += "\n"
+                # print("SCRIPT + SCRIPT EXTRA:\n", script)
+                # print("-----")
 
                 # content represents the function components, separated by new lines
                 # therefore, the actual code block occurs after the end parenthesis, which is a literal `):\n`
@@ -124,6 +127,9 @@ class Script(
 
                 s = "".join(content[token_index:])
                 script += textwrap.dedent(s)
+                final_script = textwrap.dedent(script)
+                print("FINAL SCRIPT:\n", final_script)
+                print("-------------")
                 return textwrap.dedent(script)
         else:
             assert isinstance(self.source, str)

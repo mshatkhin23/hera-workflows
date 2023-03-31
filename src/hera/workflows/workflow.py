@@ -209,16 +209,23 @@ class Workflow(
                 template = template._dispatch_hooks()
 
             if isinstance(template, Templatable):
-                templates.append(template._build_template())
+                print('building template')
+                tmp_template = template._build_template()
+                print("BUILT TEMPLATE: \n", tmp_template)
+                # templates.append(template._build_template())
+                templates.append(tmp_template)
+                
             elif isinstance(template, get_args(TTemplate)):
                 templates.append(template)
             else:
                 raise InvalidType(f"{type(template)} is not a valid template type")
 
             if isinstance(template, VolumeClaimable):
+                print("IN HERE?")
                 claims = template._build_persistent_volume_claims()
                 # If there are no claims, continue, nothing to add
                 if not claims:
+                    print('continuing')
                     continue
                 # If there are no volume claim templates, set them to the constructed claims
                 elif self.volume_claim_templates is None:
@@ -246,7 +253,7 @@ class Workflow(
 
         workflow_claims = self._build_persistent_volume_claims()
         volume_claim_templates = (self.volume_claim_templates or []) + (workflow_claims or [])
-        return _ModelWorkflow(
+        tmp_mw = _ModelWorkflow(
             api_version=self.api_version,
             kind=self.kind,
             metadata=ObjectMeta(
@@ -313,6 +320,9 @@ class Workflow(
             ),
             status=self.status,
         )
+        print(tmp_mw)
+        print("\n\n\n*************\n\n\n")
+        return tmp_mw
 
     def to_dict(self) -> Any:
         """Builds the Workflow as an Argo schema Workflow object and returns it as a dictionary."""
